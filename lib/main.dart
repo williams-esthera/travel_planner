@@ -13,57 +13,60 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const PlanManagerScreen(title: 'Travel Planner Organizer'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class PlanManagerScreen extends StatefulWidget {
+  const PlanManagerScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PlanManagerScreen> createState() => _PlanManagerScreen();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _PlanManagerScreen extends State<PlanManagerScreen> {
+  //setting colorscheme
+  Color background = Color(0xFFD4E6B5);
+  Color background2 = Color(0xFFE2D686);
+  Color accent1 = Color(0xFFAFC97E);
+  Color accent2 = Color(0xFFFFDF64);
+  Color text = Color(0xFF877B66);
+  Color text2 = Colors.black;
 
-  void _incrementCounter() {
+  //keeps track of what the user types
+  final _nameCtrl = TextEditingController();
+  final _descriptionCtrl = TextEditingController();
+  final _textController = TextEditingController();
+  //this list is full of booleans for each task, marking whether the task is completed or not
+
+  DateTime selectedDate = DateTime.now();
+
+  List<Plan> plans = [];
+  List<Plan> adoptionPlans = [];
+  List<Plan> travelPlans = [];
+
+  String dateToText(DateTime date){
+    String stringDate = "${date.year} - ${date.month} - ${date.day}";
+
+    return stringDate;
+  }
+  //add function, adds plan
+  void addPlan() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      //if the text field is empty, no task can be created
+      if (_textController.text.isNotEmpty) {}
+    });
+  }
+
+  //deletes tasks once delete button is selected
+  void deletePan(int index) {
+    setState(() {
+      plans.removeAt(index);
     });
   }
 
@@ -77,46 +80,150 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          children: [
+            ElevatedButton(
+              child: const Text("Create Plan"),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => StatefulBuilder(
+                  builder:
+                      (context, setDialogState) => AlertDialog(
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _nameCtrl.clear();
+                              _descriptionCtrl.clear();
+                            },
+                            child: const Text('Close'),
+                          ),
+                        ],
+                        title: const Text('Create Plan'),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: _nameCtrl,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter plan name',
+                                  border: const OutlineInputBorder(),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      _nameCtrl.clear();
+                                    },
+                                    icon: const Icon(Icons.clear),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Column(
+                                children: [
+                                  TextField(
+                                    controller: _descriptionCtrl,
+                                    maxLines: null,
+                                    keyboardType: TextInputType.multiline,
+                                    textAlignVertical: TextAlignVertical.top,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 100.0,
+                                        horizontal: 10.0,
+                                      ),
+                                      hintText: 'Enter plan description',
+                                      border: const OutlineInputBorder(),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _descriptionCtrl.clear();
+                                        },
+                                        icon: const Icon(Icons.clear),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                                Text(
+                                "Selected Date: ${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}",
+                              ),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  final DateTime? dateTime =
+                                      await showDatePicker(
+                                        context: context,
+                                        initialDate: selectedDate,
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(3000),
+                                      );
+                                  if (dateTime != null) {
+                                    setState(() {
+                                      selectedDate = dateTime;
+                                    });
+                                    setDialogState(() {});
+                                  }
+                                },
+                                child: const Text("Choose Date"),
+                              ),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: (){
+                                  addPlan();
+                                },
+                                child: const Text("Create Plan"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ),
+                );
+              },
+            ),
+            Expanded(
+              child: ListView.separated(
+                itemCount: plans.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      plans[index].name,
+                    ),
+                    tileColor: accent2,
+                    subtitle: Text("${plans[index].description} /n  ${dateToText(plans[index].date)}"),
+                  );
+                },
+                separatorBuilder: 
+                (BuildContext context, int index) => 
+                  const SizedBox(height:10),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
+
+class Plan {
+  String name;
+  String description;
+  DateTime date;
+  bool isCompleted;
+
+  Plan({
+    required this.name,
+    required this.description,
+    required this.date,
+    this.isCompleted = false,
+  });
+}
+
