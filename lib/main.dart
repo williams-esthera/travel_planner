@@ -41,7 +41,6 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
   //keeps track of what the user types
   final _nameCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
-  final _textController = TextEditingController();
   //this list is full of booleans for each task, marking whether the task is completed or not
 
   DateTime selectedDate = DateTime.now();
@@ -58,8 +57,17 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
   //add function, adds plan
   void addPlan() {
     setState(() {
-      //if the text field is empty, no task can be created
-      if (_textController.text.isNotEmpty) {}
+      //if the text field is empty, no plan can be created
+      if (_nameCtrl.text.isNotEmpty && _descriptionCtrl.text.isNotEmpty) {
+        //create a new plan and add it to the plan list
+        Plan newPlan = Plan(
+          name:_nameCtrl.text, 
+          description:_descriptionCtrl.text,
+          date: selectedDate
+          );
+
+        plans.add(newPlan);
+      }
     });
   }
 
