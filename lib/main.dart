@@ -5,6 +5,8 @@ class AppColors {
   static const Color background2 = Color(0xFFFBF5F3);
   static const Color accent1 = Color(0xFF522B47);
   static const Color accent2 = Color(0xFF7B0828);
+  static const Color accent3 = Color(0xFFF18F01);
+  static const Color accent4 = Color(0xFFF26430);
   static const Color text = Colors.white;
   static const Color text2 = Colors.black;
 }
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Adoption and Travel Planner',
       theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.background2,
+        scaffoldBackgroundColor: AppColors.background,
         primarySwatch: Colors.red,
         brightness: Brightness.dark,
       ),
@@ -82,6 +84,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
     });
   }
 
+//edits plan when you long 
   void editPlan(int index) {
     setState(() {
       if (_nameCtrl.text.isNotEmpty && _descriptionCtrl.text.isNotEmpty) {
@@ -114,6 +117,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
             const SizedBox(height: 30),
             ElevatedButton(
               child: const Text("Create Plan"),
+              //Creates pop-up modal for creating a plan
               onPressed: () {
                 showDialog(
                   context: context,
@@ -214,6 +218,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
                 );
               },
             ),
+            const SizedBox(height: 10),
             Expanded(
               child: ListView.separated(
                 itemCount: plans.length,
@@ -228,7 +233,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
                         _descriptionCtrl.text = plans[index].description;
                         selectedDate = plans[index].date;
                       });
-
+                      //creates a pop-up modal for editing plan
                       showDialog(
                         context: context,
                         builder:
@@ -347,7 +352,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
                         title: Text(plans[index].name),
                         tileColor: plans[index].tileColor,
                         subtitle: Text(
-                          "${plans[index].description} \n  ${dateToText(plans[index].date)}",
+                          "${plans[index].description} \n${dateToText(plans[index].date)}",
                         ),
                         onTap: () {
                           setState(() {
