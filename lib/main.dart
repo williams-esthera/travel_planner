@@ -75,10 +75,20 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
     });
   }
 
-  //deletes tasks once delete button is selected
+  //deletes plan when you double tap
   void deletePlan(int index) {
     setState(() {
       plans.removeAt(index);
+    });
+  }
+
+  void editPlan(int index) {
+    setState(() {
+      if (_nameCtrl.text.isNotEmpty && _descriptionCtrl.text.isNotEmpty) {
+      plans[index].name = _nameCtrl.text;
+      plans[index].description = _descriptionCtrl.text;
+      plans[index].date = selectedDate;
+      }
     });
   }
 
@@ -212,6 +222,115 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
                     onDoubleTap: () {
                       deletePlan(index);
                     },
+                    onLongPress: () {
+                      setState(() {
+                        _nameCtrl.text = plans[index].name;
+                        _descriptionCtrl.text = plans[index].description;
+                        selectedDate = plans[index].date;
+                      });
+
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => StatefulBuilder(
+                              builder:
+                                  (context, setDialogState) => AlertDialog(
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Close'),
+                                      ),
+                                    ],
+                                    title: const Text('Update Plan'),
+                                    content: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextField(
+                                            controller: _nameCtrl,
+                                            decoration: InputDecoration(
+                                              hintText: 'Enter plan name',
+                                              border:
+                                                  const OutlineInputBorder(),
+                                              suffixIcon: IconButton(
+                                                onPressed: () {
+                                                  _nameCtrl.clear();
+                                                },
+                                                icon: const Icon(Icons.clear),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Column(
+                                            children: [
+                                              TextField(
+                                                controller: _descriptionCtrl,
+                                                maxLines: null,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                textAlignVertical:
+                                                    TextAlignVertical.top,
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                        vertical: 100.0,
+                                                        horizontal: 10.0,
+                                                      ),
+                                                  hintText:
+                                                      'Enter plan description',
+                                                  border:
+                                                      const OutlineInputBorder(),
+                                                  suffixIcon: IconButton(
+                                                    onPressed: () {
+                                                      _descriptionCtrl.clear();
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.clear,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            "Selected Date: ${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}",
+                                          ),
+                                          const SizedBox(height: 10),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              final DateTime? dateTime =
+                                                  await showDatePicker(
+                                                    context: context,
+                                                    initialDate: selectedDate,
+                                                    firstDate: DateTime(2000),
+                                                    lastDate: DateTime(3000),
+                                                  );
+                                              if (dateTime != null) {
+                                                setState(() {
+                                                  selectedDate = dateTime;
+                                                });
+                                                setDialogState(() {});
+                                              }
+                                            },
+                                            child: const Text("Choose Date"),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              editPlan(index);
+                                            },
+                                            child: const Text("Edit Plan"),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                      );
+                    },
                     child: Dismissible(
                       key: ValueKey<int>(index),
                       background: Container(color: plans[index].tileColor),
@@ -232,7 +351,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
                         ),
                         onTap: () {
                           setState(() {
-                            // This will force the list tile to rebuild
+                            // forces list to rebuild with updated completion status
                           });
                         },
                       ),
