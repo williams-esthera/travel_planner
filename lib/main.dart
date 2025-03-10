@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+class AppColors {
+  static const Color background = Color(0xFF8DAA9D);
+  static const Color background2 = Color(0xFFFBF5F3);
+  static const Color accent1 = Color(0xFF522B47);
+  static const Color accent2 = Color(0xFF7B0828);
+  static const Color text = Colors.white;
+  static const Color text2 = Colors.black;
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -11,9 +20,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Adoption and Travel Planner',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: AppColors.background2,
+        primarySwatch: Colors.red,
+        brightness: Brightness.dark,
       ),
       home: const PlanManagerScreen(title: 'Travel Planner Organizer'),
     );
@@ -30,14 +41,6 @@ class PlanManagerScreen extends StatefulWidget {
 }
 
 class _PlanManagerScreen extends State<PlanManagerScreen> {
-  //setting colorscheme
-  Color background = Color(0xFFD4E6B5);
-  Color background2 = Color(0xFFE2D686);
-  Color accent1 = Color(0xFFAFC97E);
-  Color accent2 = Color(0xFFFFDF64);
-  Color text = Color(0xFF877B66);
-  Color text2 = Colors.black;
-
   //keeps track of what the user types
   final _nameCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
@@ -49,11 +52,12 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
   List<Plan> adoptionPlans = [];
   List<Plan> travelPlans = [];
 
-  String dateToText(DateTime date){
+  String dateToText(DateTime date) {
     String stringDate = "${date.year} - ${date.month} - ${date.day}";
 
     return stringDate;
   }
+
   //add function, adds plan
   void addPlan() {
     setState(() {
@@ -61,10 +65,10 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
       if (_nameCtrl.text.isNotEmpty && _descriptionCtrl.text.isNotEmpty) {
         //create a new plan and add it to the plan list
         Plan newPlan = Plan(
-          name:_nameCtrl.text, 
-          description:_descriptionCtrl.text,
-          date: selectedDate
-          );
+          name: _nameCtrl.text,
+          description: _descriptionCtrl.text,
+          date: selectedDate,
+        );
 
         plans.add(newPlan);
       }
@@ -72,7 +76,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
   }
 
   //deletes tasks once delete button is selected
-  void deletePan(int index) {
+  void deletePlan(int index) {
     setState(() {
       plans.removeAt(index);
     });
@@ -88,7 +92,7 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: AppColors.accent2,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -97,102 +101,106 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 30),
             ElevatedButton(
               child: const Text("Create Plan"),
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => StatefulBuilder(
                   builder:
-                      (context, setDialogState) => AlertDialog(
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _nameCtrl.clear();
-                              _descriptionCtrl.clear();
-                            },
-                            child: const Text('Close'),
-                          ),
-                        ],
-                        title: const Text('Create Plan'),
-                        content: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextField(
-                                controller: _nameCtrl,
-                                decoration: InputDecoration(
-                                  hintText: 'Enter plan name',
-                                  border: const OutlineInputBorder(),
-                                  suffixIcon: IconButton(
-                                    onPressed: () {
-                                      _nameCtrl.clear();
-                                    },
-                                    icon: const Icon(Icons.clear),
-                                  ),
+                      (context) => StatefulBuilder(
+                        builder:
+                            (context, setDialogState) => AlertDialog(
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _nameCtrl.clear();
+                                    _descriptionCtrl.clear();
+                                  },
+                                  child: const Text('Close'),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              Column(
-                                children: [
-                                  TextField(
-                                    controller: _descriptionCtrl,
-                                    maxLines: null,
-                                    keyboardType: TextInputType.multiline,
-                                    textAlignVertical: TextAlignVertical.top,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 100.0,
-                                        horizontal: 10.0,
-                                      ),
-                                      hintText: 'Enter plan description',
-                                      border: const OutlineInputBorder(),
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          _descriptionCtrl.clear();
-                                        },
-                                        icon: const Icon(Icons.clear),
+                              ],
+                              title: const Text('Create Plan'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextField(
+                                      controller: _nameCtrl,
+                                      decoration: InputDecoration(
+                                        hintText: 'Enter plan name',
+                                        border: const OutlineInputBorder(),
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            _nameCtrl.clear();
+                                          },
+                                          icon: const Icon(Icons.clear),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 10),
+                                    Column(
+                                      children: [
+                                        TextField(
+                                          controller: _descriptionCtrl,
+                                          maxLines: null,
+                                          keyboardType: TextInputType.multiline,
+                                          textAlignVertical:
+                                              TextAlignVertical.top,
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                  vertical: 100.0,
+                                                  horizontal: 10.0,
+                                                ),
+                                            hintText: 'Enter plan description',
+                                            border: const OutlineInputBorder(),
+                                            suffixIcon: IconButton(
+                                              onPressed: () {
+                                                _descriptionCtrl.clear();
+                                              },
+                                              icon: const Icon(Icons.clear),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "Selected Date: ${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}",
+                                    ),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final DateTime? dateTime =
+                                            await showDatePicker(
+                                              context: context,
+                                              initialDate: selectedDate,
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(3000),
+                                            );
+                                        if (dateTime != null) {
+                                          setState(() {
+                                            selectedDate = dateTime;
+                                          });
+                                          setDialogState(() {});
+                                        }
+                                      },
+                                      child: const Text("Choose Date"),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        addPlan();
+                                      },
+                                      child: const Text("Create Plan"),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 10),
-                                Text(
-                                "Selected Date: ${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}",
-                              ),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final DateTime? dateTime =
-                                      await showDatePicker(
-                                        context: context,
-                                        initialDate: selectedDate,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(3000),
-                                      );
-                                  if (dateTime != null) {
-                                    setState(() {
-                                      selectedDate = dateTime;
-                                    });
-                                    setDialogState(() {});
-                                  }
-                                },
-                                child: const Text("Choose Date"),
-                              ),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: (){
-                                  addPlan();
-                                },
-                                child: const Text("Create Plan"),
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
                       ),
-                  ),
                 );
               },
             ),
@@ -200,17 +208,40 @@ class _PlanManagerScreen extends State<PlanManagerScreen> {
               child: ListView.separated(
                 itemCount: plans.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(
-                      plans[index].name,
+                  return GestureDetector(
+                    onDoubleTap: () {
+                      deletePlan(index);
+                    },
+                    child: Dismissible(
+                      key: ValueKey<int>(index),
+                      background: Container(color: plans[index].tileColor),
+                      confirmDismiss: (DismissDirection direction) async {
+                        setState(() {
+                          //set completed to true or false
+                          plans[index].isCompleted = !plans[index].isCompleted;
+                          plans[index].switchTile();
+                        });
+                        await Future.delayed(const Duration(milliseconds: 300));
+                        return false;
+                      },
+                      child: ListTile(
+                        title: Text(plans[index].name),
+                        tileColor: plans[index].tileColor,
+                        subtitle: Text(
+                          "${plans[index].description} \n  ${dateToText(plans[index].date)}",
+                        ),
+                        onTap: () {
+                          setState(() {
+                            // This will force the list tile to rebuild
+                          });
+                        },
+                      ),
                     ),
-                    tileColor: accent2,
-                    subtitle: Text("${plans[index].description} /n  ${dateToText(plans[index].date)}"),
                   );
                 },
-                separatorBuilder: 
-                (BuildContext context, int index) => 
-                  const SizedBox(height:10),
+                separatorBuilder:
+                    (BuildContext context, int index) =>
+                        const SizedBox(height: 10),
               ),
             ),
           ],
@@ -226,12 +257,23 @@ class Plan {
   String description;
   DateTime date;
   bool isCompleted;
+  Color tileColor;
+  static const Color pending = AppColors.accent1;
+  static const Color completed = AppColors.accent2;
+
+  void switchTile() {
+    if (tileColor == pending) {
+      tileColor = completed;
+    } else {
+      tileColor = pending;
+    }
+  }
 
   Plan({
     required this.name,
     required this.description,
     required this.date,
+    this.tileColor = pending,
     this.isCompleted = false,
   });
 }
-
